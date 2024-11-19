@@ -13,3 +13,7 @@ body {
     @apply w-full bg-slate-100 text-gray-800;
 }
 
+.page {
+    @apply w-full h-full min-h-[calc(100vh-70px)] ;
+}
+

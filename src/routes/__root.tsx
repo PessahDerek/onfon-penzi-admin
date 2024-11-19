@@ -1,6 +1,7 @@
 import * as React from 'react'
-import {createRootRoute, Link, Outlet} from '@tanstack/react-router'
+import {createRootRoute, Outlet} from '@tanstack/react-router'
 import {TanStackRouterDevtools} from '@tanstack/router-devtools'
+import AuthProvider from "../contexts/Authorization";
 
 export const Route = createRootRoute({
     component: RootComponent,
@@ -8,29 +9,11 @@ export const Route = createRootRoute({
 
 function RootComponent() {
     return (
-        <>
-            <div className="">
-                <Link
-                    to="/"
-                    activeProps={{
-                        className: 'font-bold',
-                    }}
-                    activeOptions={{exact: true}}
-                >
-                    Home
-                </Link>
-                <Link
-                    to="/about"
-                    activeProps={{
-                        className: 'font-bold',
-                    }}
-                >
-                    About
-                </Link>
-            </div>
-            <hr/>
-            <Outlet/>
+        <div className={'w-full h-max'}>
+            <AuthProvider>
+                <Outlet/>
+            </AuthProvider>
             <TanStackRouterDevtools position="bottom-right"/>
-        </>
+        </div>
     )
 }
