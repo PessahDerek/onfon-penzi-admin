@@ -1,6 +1,3 @@
-
-
-
 import axios from 'axios';
 
 const api = axios.create({
@@ -8,8 +5,16 @@ const api = axios.create({
 })
 
 api.interceptors.request.use(config => {
-    config.headers.Authorization = 'Basic ' + localStorage.getItem('token');
+    config.headers.Authorization = 'Bearer ' + localStorage.getItem('token') ?? "";
     return config;
+})
+
+api.interceptors.response.use(config => config, error => {
+    if (error.status == 401) {
+        localStorage.clear()
+        window.location.href = "/auth/auth"
+    }
+    return error
 })
 
 export default api

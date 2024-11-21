@@ -8,101 +8,182 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
+import { createFileRoute } from '@tanstack/react-router'
+
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
-import { Route as AuthImport } from './routes/auth'
-import { Route as AboutImport } from './routes/about'
-import { Route as IndexImport } from './routes/index'
+import { Route as AuthAuthImport } from './routes/auth/auth'
+import { Route as appAppLayoutImport } from './routes/(app)/_app-layout'
+import { Route as appAppLayoutIndexImport } from './routes/(app)/_app-layout/index'
+import { Route as appAppLayoutUsersImport } from './routes/(app)/_app-layout/users'
+import { Route as appAppLayoutMessagesImport } from './routes/(app)/_app-layout/messages'
+
+// Create Virtual Routes
+
+const appImport = createFileRoute('/(app)')()
 
 // Create/Update Routes
 
-const AuthRoute = AuthImport.update({
-  id: '/auth',
-  path: '/auth',
+const appRoute = appImport.update({
+  id: '/(app)',
   getParentRoute: () => rootRoute,
 } as any)
 
-const AboutRoute = AboutImport.update({
-  id: '/about',
-  path: '/about',
+const AuthAuthRoute = AuthAuthImport.update({
+  id: '/auth/auth',
+  path: '/auth/auth',
   getParentRoute: () => rootRoute,
 } as any)
 
-const IndexRoute = IndexImport.update({
+const appAppLayoutRoute = appAppLayoutImport.update({
+  id: '/_app-layout',
+  getParentRoute: () => appRoute,
+} as any)
+
+const appAppLayoutIndexRoute = appAppLayoutIndexImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => appAppLayoutRoute,
+} as any)
+
+const appAppLayoutUsersRoute = appAppLayoutUsersImport.update({
+  id: '/users',
+  path: '/users',
+  getParentRoute: () => appAppLayoutRoute,
+} as any)
+
+const appAppLayoutMessagesRoute = appAppLayoutMessagesImport.update({
+  id: '/messages',
+  path: '/messages',
+  getParentRoute: () => appAppLayoutRoute,
 } as any)
 
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
+    '/(app)': {
+      id: '/(app)'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof IndexImport
+      preLoaderRoute: typeof appImport
       parentRoute: typeof rootRoute
     }
-    '/about': {
-      id: '/about'
-      path: '/about'
-      fullPath: '/about'
-      preLoaderRoute: typeof AboutImport
+    '/(app)/_app-layout': {
+      id: '/(app)/_app-layout'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof appAppLayoutImport
+      parentRoute: typeof appRoute
+    }
+    '/auth/auth': {
+      id: '/auth/auth'
+      path: '/auth/auth'
+      fullPath: '/auth/auth'
+      preLoaderRoute: typeof AuthAuthImport
       parentRoute: typeof rootRoute
     }
-    '/auth': {
-      id: '/auth'
-      path: '/auth'
-      fullPath: '/auth'
-      preLoaderRoute: typeof AuthImport
-      parentRoute: typeof rootRoute
+    '/(app)/_app-layout/messages': {
+      id: '/(app)/_app-layout/messages'
+      path: '/messages'
+      fullPath: '/messages'
+      preLoaderRoute: typeof appAppLayoutMessagesImport
+      parentRoute: typeof appAppLayoutImport
+    }
+    '/(app)/_app-layout/users': {
+      id: '/(app)/_app-layout/users'
+      path: '/users'
+      fullPath: '/users'
+      preLoaderRoute: typeof appAppLayoutUsersImport
+      parentRoute: typeof appAppLayoutImport
+    }
+    '/(app)/_app-layout/': {
+      id: '/(app)/_app-layout/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof appAppLayoutIndexImport
+      parentRoute: typeof appAppLayoutImport
     }
   }
 }
 
 // Create and export the route tree
 
+interface appAppLayoutRouteChildren {
+  appAppLayoutMessagesRoute: typeof appAppLayoutMessagesRoute
+  appAppLayoutUsersRoute: typeof appAppLayoutUsersRoute
+  appAppLayoutIndexRoute: typeof appAppLayoutIndexRoute
+}
+
+const appAppLayoutRouteChildren: appAppLayoutRouteChildren = {
+  appAppLayoutMessagesRoute: appAppLayoutMessagesRoute,
+  appAppLayoutUsersRoute: appAppLayoutUsersRoute,
+  appAppLayoutIndexRoute: appAppLayoutIndexRoute,
+}
+
+const appAppLayoutRouteWithChildren = appAppLayoutRoute._addFileChildren(
+  appAppLayoutRouteChildren,
+)
+
+interface appRouteChildren {
+  appAppLayoutRoute: typeof appAppLayoutRouteWithChildren
+}
+
+const appRouteChildren: appRouteChildren = {
+  appAppLayoutRoute: appAppLayoutRouteWithChildren,
+}
+
+const appRouteWithChildren = appRoute._addFileChildren(appRouteChildren)
+
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '/about': typeof AboutRoute
-  '/auth': typeof AuthRoute
+  '/': typeof appAppLayoutIndexRoute
+  '/auth/auth': typeof AuthAuthRoute
+  '/messages': typeof appAppLayoutMessagesRoute
+  '/users': typeof appAppLayoutUsersRoute
 }
 
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/about': typeof AboutRoute
-  '/auth': typeof AuthRoute
+  '/auth/auth': typeof AuthAuthRoute
+  '/messages': typeof appAppLayoutMessagesRoute
+  '/users': typeof appAppLayoutUsersRoute
+  '/': typeof appAppLayoutIndexRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
-  '/': typeof IndexRoute
-  '/about': typeof AboutRoute
-  '/auth': typeof AuthRoute
+  '/(app)': typeof appRouteWithChildren
+  '/(app)/_app-layout': typeof appAppLayoutRouteWithChildren
+  '/auth/auth': typeof AuthAuthRoute
+  '/(app)/_app-layout/messages': typeof appAppLayoutMessagesRoute
+  '/(app)/_app-layout/users': typeof appAppLayoutUsersRoute
+  '/(app)/_app-layout/': typeof appAppLayoutIndexRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about' | '/auth'
+  fullPaths: '/' | '/auth/auth' | '/messages' | '/users'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about' | '/auth'
-  id: '__root__' | '/' | '/about' | '/auth'
+  to: '/auth/auth' | '/messages' | '/users' | '/'
+  id:
+    | '__root__'
+    | '/(app)'
+    | '/(app)/_app-layout'
+    | '/auth/auth'
+    | '/(app)/_app-layout/messages'
+    | '/(app)/_app-layout/users'
+    | '/(app)/_app-layout/'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  AboutRoute: typeof AboutRoute
-  AuthRoute: typeof AuthRoute
+  appRoute: typeof appRouteWithChildren
+  AuthAuthRoute: typeof AuthAuthRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
-  AboutRoute: AboutRoute,
-  AuthRoute: AuthRoute,
+  appRoute: appRouteWithChildren,
+  AuthAuthRoute: AuthAuthRoute,
 }
 
 export const routeTree = rootRoute
@@ -115,19 +196,39 @@ export const routeTree = rootRoute
     "__root__": {
       "filePath": "__root.tsx",
       "children": [
-        "/",
-        "/about",
-        "/auth"
+        "/(app)",
+        "/auth/auth"
       ]
     },
-    "/": {
-      "filePath": "index.tsx"
+    "/(app)": {
+      "filePath": "(app)",
+      "children": [
+        "/(app)/_app-layout"
+      ]
     },
-    "/about": {
-      "filePath": "about.tsx"
+    "/(app)/_app-layout": {
+      "filePath": "(app)/_app-layout.tsx",
+      "parent": "/(app)",
+      "children": [
+        "/(app)/_app-layout/messages",
+        "/(app)/_app-layout/users",
+        "/(app)/_app-layout/"
+      ]
     },
-    "/auth": {
-      "filePath": "auth.tsx"
+    "/auth/auth": {
+      "filePath": "auth/auth.tsx"
+    },
+    "/(app)/_app-layout/messages": {
+      "filePath": "(app)/_app-layout/messages.tsx",
+      "parent": "/(app)/_app-layout"
+    },
+    "/(app)/_app-layout/users": {
+      "filePath": "(app)/_app-layout/users.tsx",
+      "parent": "/(app)/_app-layout"
+    },
+    "/(app)/_app-layout/": {
+      "filePath": "(app)/_app-layout/index.tsx",
+      "parent": "/(app)/_app-layout"
     }
   }
 }

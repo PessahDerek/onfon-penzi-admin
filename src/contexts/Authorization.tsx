@@ -16,19 +16,23 @@ export default function AuthProvider({children}: { children: React.ReactNode }) 
         token: "",
     })
     const navigate = useNavigate({from: "/"})
+
     const token = useMemo(() => {
-        return context.token ? context.token : localStorage.getItem("token")
-    }, [context?.token])
+        const token = context.token ? context.token : localStorage.getItem("token")
+        const username = context.username ? context.username : localStorage.getItem("username")
+        setContext(prev => ({...prev, token: token ?? "", username: username ?? ""}))
+        return token
+    }, [context?.token, context?.username])
 
     const saveToken = (token: string, username: string) => {
         localStorage.setItem("token", token)
+        localStorage.setItem("username", username)
         setContext({username, token})
     }
 
     useEffect(() => {
-        console.log("Context: ", context)
-        if (!token)
-            navigate({to: "/auth"}).catch()
+        if (!token || !localStorage.getItem("token"))
+            navigate({to: "/auth/auth"}).catch()
         else navigate({from: "/", to: "/"}).catch()
     }, [token])
 

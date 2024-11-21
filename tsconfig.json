@@ -6,6 +6,7 @@
     "target": "ESNext",
     "module": "ESNext",
     "moduleResolution": "Bundler",
-    "types": ["global.d.ts"]
+    "types": ["global.d.ts"],
+    "typeRoots": ["global-sec.d.ts"]
   }
 }
