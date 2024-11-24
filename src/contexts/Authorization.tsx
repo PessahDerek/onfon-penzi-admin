@@ -25,15 +25,19 @@ export default function AuthProvider({children}: { children: React.ReactNode }) 
     }, [context?.token, context?.username])
 
     const saveToken = (token: string, username: string) => {
+        console.log("Saved: ", token)
+        localStorage.setItem("logged_in", "1")
         localStorage.setItem("token", token)
         localStorage.setItem("username", username)
-        setContext({username, token})
+        const newVal = {username, token}
+        setContext(()=>({...newVal}))
     }
 
     useEffect(() => {
-        if (!token || !localStorage.getItem("token"))
+        if (!token && !localStorage.getItem("token")) {
+            console.log("Its me")
             navigate({to: "/auth/auth"}).catch()
-        else navigate({from: "/", to: "/"}).catch()
+        } else navigate({from: "/", to: "/"}).catch()
     }, [token])
 
     return (

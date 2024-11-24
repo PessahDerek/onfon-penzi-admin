@@ -11,7 +11,7 @@ function RouteComponent() {
     return (
         <div className={"flex gap-2"}>
             <LeftPanel/>
-            <div className={"flex-1 h-screen overflow-y-auto"}>
+            <div className={"flex-1 h-screen overflow-y-hidden"}>
                 <Outlet/>
             </div>
         </div>

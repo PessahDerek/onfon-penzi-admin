@@ -39,7 +39,6 @@ declare interface UserObj {
 declare interface UserFilterObj {
     [key: string]: string | undefined | GenderObj | { max?: number, min: number };
 
-    search: string;
     age: {
         min: number;
         max?: number;
@@ -47,6 +46,17 @@ declare interface UserFilterObj {
     town: string;
     county: string;
     gender?: GenderObj | string
+}
+
+declare interface MessageObj {
+    [key: string]: number | string | "incoming" | "outgoing"
+
+    'id': number,
+    'user_id': number,
+    'phone': string,
+    'message': string,
+    'msg_type': "incoming" | "outgoing",
+    'created_at': string
 }
 
 declare module '*.jpg' {
